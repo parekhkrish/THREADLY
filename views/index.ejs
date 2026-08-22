@@ -129,6 +129,7 @@
                     
                     const isPostAuthor = typeof currentUser !== 'undefined' && currentUser && post.author && (post.author._id ? post.author._id.toString() : post.author.toString()) === currentUser._id.toString();
                     const canModify = typeof currentUser !== 'undefined' && currentUser && (isAdmin || isPostAuthor);
+                    const isAuthorAdmin = post.author && post.author.role === 'admin';
                 %>
                     <article class="post-card">
                         <div class="post-card-header">
@@ -139,6 +140,9 @@
                                 <div class="username-wrapper">
                                     <h3 class="username">@<%= username %></h3>
                                     <span class="verified-badge">✓</span>
+                                    <% if (isAuthorAdmin) { %>
+                                        <span class="role-badge role-admin" style="font-size: 0.62rem;">ADMIN</span>
+                                    <% } %>
                                 </div>
                                 <div class="post-submeta">
                                     <span class="post-date"><%= formattedDate %></span>

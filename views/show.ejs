@@ -19,6 +19,7 @@
         <% 
             const isPostAuthor = typeof currentUser !== 'undefined' && currentUser && post.author && (post.author._id ? post.author._id.toString() : post.author.toString()) === currentUser._id.toString();
             const canModify = typeof currentUser !== 'undefined' && currentUser && (isAdmin || isPostAuthor);
+            const isAuthorAdmin = post.author && post.author.role === 'admin';
         %>
 
         <div class="detail-navigation">
@@ -61,6 +62,9 @@
                     <div class="username-wrapper">
                         <h1 class="username-lg">@<%= username %></h1>
                         <span class="verified-badge lg">✓</span>
+                        <% if (isAuthorAdmin) { %>
+                            <span class="role-badge role-admin" style="font-size: 0.72rem; margin-left: 6px;">ADMIN</span>
+                        <% } %>
                     </div>
                     <p class="post-timestamp"><%= formattedDate %></p>
                 </div>
