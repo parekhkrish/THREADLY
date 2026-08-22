@@ -52,13 +52,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="role" class="form-label">
-                        <span>Account Role</span>
+                    <label for="adminCode" class="form-label">
+                        <span>Admin Secret Passcode</span>
+                        <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 400; margin-left: 6px;">(Optional — Leave blank for regular users)</span>
                     </label>
-                    <select id="role" name="role" class="form-input form-select">
-                        <option value="user" selected>Regular User (Post & Edit Own Posts)</option>
-                        <option value="admin">Administrator (Full Access & Delete Any Post)</option>
-                    </select>
+                    <input id="adminCode" name="adminCode" type="password" placeholder="Enter secret code if you are an Admin" class="form-input">
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-spark btn-lg w-full">

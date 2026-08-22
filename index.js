@@ -129,7 +129,7 @@ app.get("/signup", (req, res) => {
 // POST Signup
 app.post("/signup", async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, email, password, adminCode } = req.body;
         
         if (!username || !email || !password) {
             return res.render("signup.ejs", { error: "All fields are required." });
@@ -140,10 +140,17 @@ app.post("/signup", async (req, res) => {
             return res.render("signup.ejs", { error: "An account with this email already exists." });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        let userRole = "user";
+        if (adminCode && adminCode.trim() !== "") {
+            const expectedCode = process.env.ADMIN_SECRET || "threadly_admin_123";
+            if (adminCode.trim() === expectedCode) {
+                userRole = "admin";
+            } else {
+                return res.render("signup.ejs", { error: "Invalid Admin Passcode. Leave it empty for standard user registration." });
+            }
+        }
 
-        // Assign role: if requested admin, set admin; otherwise user
-        const userRole = role === "admin" ? "admin" : "user";
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
             username: username.trim(),
