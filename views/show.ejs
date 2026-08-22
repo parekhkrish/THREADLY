@@ -1,0 +1,148 @@
+<%- include('partials/header', { title: 'Post — @' + (post.username || 'Anonymous') }) %>
+
+<main class="main-content detail-page-layout">
+    <div class="detail-container">
+        <% 
+            const postIdStr = post._id ? post._id.toString() : post.id.toString();
+            const username = post.username || 'Anonymous';
+            const initial = username.charAt(0).toUpperCase();
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash) % 360;
+            const wordCount = post.content ? post.content.trim().split(/\s+/).length : 0;
+            const charCount = post.content ? post.content.length : 0;
+            const formattedDate = post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently published';
+        %>
+
+        <div class="detail-navigation">
+            <a href="/posts" class="back-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Back to Feed</span>
+            </a>
+            
+            <div class="detail-actions-top">
+                <a href="/posts/<%= postIdStr %>/edit" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Edit</span>
+                </a>
+                <form method="POST" action="/posts/<%= postIdStr %>/delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    <button type="submit" class="btn btn-danger">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span>Delete</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <article class="detail-card">
+            <header class="detail-card-header">
+                <div class="avatar avatar-large" style="--avatar-hue: <%= hue %>deg">
+                    <span><%= initial %></span>
+                </div>
+                <div class="user-meta-large">
+                    <div class="username-wrapper">
+                        <h1 class="username-lg">@<%= username %></h1>
+                        <span class="verified-badge lg">✓</span>
+                    </div>
+                    <p class="post-timestamp"><%= formattedDate %></p>
+                </div>
+            </header>
+
+            <div class="detail-body">
+                <p class="content-lg"><%= post.content %></p>
+            </div>
+
+            <div class="detail-stats-bar">
+                <div class="metric-item">
+                    <span class="metric-label">Words</span>
+                    <span class="metric-value"><%= wordCount %></span>
+                </div>
+                <div class="metric-divider"></div>
+                <div class="metric-item">
+                    <span class="metric-label">Characters</span>
+                    <span class="metric-value"><%= charCount %></span>
+                </div>
+                <div class="metric-divider"></div>
+                <div class="metric-item">
+                    <span class="metric-label">Status</span>
+                    <span class="metric-value green">Live</span>
+                </div>
+            </div>
+
+            <footer class="detail-card-footer">
+                <div class="mongo-id-block">
+                    <span class="id-title">Post Reference Code</span>
+                    <div class="id-copy-row">
+                        <code id="post-id-code"><%= postIdStr %></code>
+                        <button type="button" class="btn btn-xs btn-outline" id="copy-id-btn" title="Copy Reference Code">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span id="copy-btn-text">Copy Code</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="share-block">
+                    <button type="button" class="btn btn-secondary" id="share-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                        <span>Share Post</span>
+                    </button>
+                </div>
+            </footer>
+        </article>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const copyBtn = document.getElementById('copy-id-btn');
+        const copyBtnText = document.getElementById('copy-btn-text');
+        const postIdCode = document.getElementById('post-id-code');
+
+        if (copyBtn && postIdCode) {
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(postIdCode.textContent.trim()).then(() => {
+                    copyBtnText.textContent = 'Copied!';
+                    setTimeout(() => { copyBtnText.textContent = 'Copy Code'; }, 2000);
+                });
+            });
+        }
+
+        const shareBtn = document.getElementById('share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Threadly Post by @<%= username %>',
+                        url: window.location.href
+                    }).catch(() => {});
+                } else {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        alert('Post link copied to clipboard!');
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

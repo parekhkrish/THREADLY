@@ -1,0 +1,157 @@
+<%- include('partials/header', { title: 'New Post', activePage: 'new' }) %>
+
+<main class="main-content form-page-layout">
+    <div class="composer-container">
+        <!-- Left: Form Panel -->
+        <div class="composer-form-section">
+            <div class="form-header-block">
+                <a href="/posts" class="back-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Back to Feed</span>
+                </a>
+                <span class="badge-pill sm">
+                    <span class="badge-dot blue"></span>
+                    <span>Composer</span>
+                </span>
+                <h1 class="form-title">Create New Post</h1>
+                <p class="form-subtitle">Share your story, idea, or update with the community.</p>
+            </div>
+
+            <form method="POST" action="/posts" class="post-form" id="create-post-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span>Author Handle</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    <div class="input-prefix-wrapper">
+                        <span class="input-prefix">@</span>
+                        <input id="username" name="username" type="text" placeholder="alex_dev" autocomplete="username" required maxlength="30" class="form-input">
+                    </div>
+                    <span class="form-help">Your unique handle on Threadly.</span>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-counter">
+                        <label for="content" class="form-label">
+                            <span>Post Content</span>
+                            <span class="required-star">*</span>
+                        </label>
+                        <span class="char-counter" id="char-counter">0 / 500</span>
+                    </div>
+                    <textarea id="content" name="content" placeholder="What's happening? Share your thoughts, story, or idea..." rows="6" required maxlength="500" class="form-textarea"></textarea>
+                    <div class="form-meta-row">
+                        <span class="form-help">Supports plain text and short posts.</span>
+                        <span class="word-counter" id="word-counter">0 words</span>
+                    </div>
+                </div>
+
+                <div class="form-actions-row">
+                    <a href="/posts" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-spark btn-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        <span>Publish Post</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right: Live Preview Panel -->
+        <div class="composer-preview-section">
+            <div class="preview-header">
+                <span class="preview-badge">Live Preview</span>
+                <span class="preview-hint">Updates automatically as you type</span>
+            </div>
+
+            <div class="preview-card-wrapper">
+                <article class="post-card preview-card">
+                    <div class="post-card-header">
+                        <div class="avatar" id="preview-avatar" style="--avatar-hue: 200deg">
+                            <span id="preview-initial">U</span>
+                        </div>
+                        <div class="user-meta">
+                            <div class="username-wrapper">
+                                <h3 class="username" id="preview-username">@username</h3>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                            <div class="post-submeta">
+                                <span class="post-date">Just now</span>
+                                <span class="dot-separator">•</span>
+                                <span class="read-time" id="preview-word-count">0 words</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-body">
+                        <p class="content" id="preview-content">Your post content will appear here in real-time as you draft your thought...</p>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="post-id-badge">
+                            <span class="id-label">REF</span>
+                            <code class="id-code">#preview</code>
+                        </div>
+
+                        <div class="card-actions">
+                            <span class="preview-status">Preview Mode</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const usernameInput = document.getElementById('username');
+        const contentInput = document.getElementById('content');
+        
+        const previewUsername = document.getElementById('preview-username');
+        const previewInitial = document.getElementById('preview-initial');
+        const previewAvatar = document.getElementById('preview-avatar');
+        const previewContent = document.getElementById('preview-content');
+        const previewWordCount = document.getElementById('preview-word-count');
+        
+        const charCounter = document.getElementById('char-counter');
+        const wordCounter = document.getElementById('word-counter');
+
+        function updatePreview() {
+            const usernameVal = usernameInput.value.trim() || 'username';
+            const contentVal = contentInput.value.trim();
+
+            previewUsername.textContent = '@' + usernameVal;
+            previewInitial.textContent = usernameVal.charAt(0).toUpperCase() || 'U';
+
+            let hash = 0;
+            for (let i = 0; i < usernameVal.length; i++) {
+                hash = usernameVal.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = Math.abs(hash) % 360;
+            previewAvatar.style.setProperty('--avatar-hue', `${hue}deg`);
+
+            if (contentVal) {
+                previewContent.textContent = contentVal;
+            } else {
+                previewContent.textContent = 'Your post content will appear here in real-time as you draft your thought...';
+            }
+
+            const charCount = contentInput.value.length;
+            const words = contentVal ? contentVal.split(/\s+/).filter(Boolean).length : 0;
+
+            charCounter.textContent = `${charCount} / 500`;
+            wordCounter.textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
+            previewWordCount.textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
+        }
+
+        usernameInput.addEventListener('input', updatePreview);
+        contentInput.addEventListener('input', updatePreview);
+    });
+</script>
+
+<%- include('partials/footer') %>
