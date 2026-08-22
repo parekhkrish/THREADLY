@@ -213,8 +213,8 @@ app.post("/logout", (req, res) => {
 
 // --- POST ROUTES ---
 
-// GET all posts
-app.get("/posts", async (req, res) => {
+// GET all posts (Protected)
+app.get("/posts", requireLogin, async (req, res) => {
     try {
         const posts = await Post.find().populate("author").sort({ createdAt: -1 });
         res.render("index.ejs", { posts });
@@ -248,8 +248,8 @@ app.post("/posts", requireLogin, async (req, res) => {
     }
 });
 
-// GET single post
-app.get("/posts/:id", async (req, res) => {
+// GET single post (Protected)
+app.get("/posts/:id", requireLogin, async (req, res) => {
     try {
         const { id } = req.params;
         const post = await Post.findById(id).populate("author");
