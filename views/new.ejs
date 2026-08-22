@@ -22,15 +22,13 @@
 
             <form method="POST" action="/posts" class="post-form" id="create-post-form">
                 <div class="form-group">
-                    <label for="username" class="form-label">
-                        <span>Author Handle</span>
-                        <span class="required-star">*</span>
-                    </label>
-                    <div class="input-prefix-wrapper">
-                        <span class="input-prefix">@</span>
-                        <input id="username" name="username" type="text" placeholder="alex_dev" autocomplete="username" required maxlength="30" class="form-input">
+                    <label class="form-label">Posting as</label>
+                    <div class="user-posting-as">
+                        <div class="avatar avatar-sm">
+                            <span><%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'U' %></span>
+                        </div>
+                        <span class="user-posting-name">@<%= currentUser ? currentUser.username : 'User' %></span>
                     </div>
-                    <span class="form-help">Your unique handle on Threadly.</span>
                 </div>
 
                 <div class="form-group">
