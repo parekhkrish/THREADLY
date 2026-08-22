@@ -131,7 +131,7 @@
                     const canModify = typeof currentUser !== 'undefined' && currentUser && (isAdmin || isPostAuthor);
                     const isAuthorAdmin = post.author && post.author.role === 'admin';
                 %>
-                    <article class="post-card">
+                    <article class="post-card clickable-card" onclick="if (!event.target.closest('a, button, form')) window.location.href='/posts/<%= postIdStr %>';">
                         <div class="post-card-header">
                             <div class="avatar" style="--avatar-hue: <%= hue %>deg">
                                 <span><%= initial %></span>
@@ -153,7 +153,7 @@
 
                             <% if (canModify) { %>
                                 <div class="post-menu">
-                                    <a href="/posts/<%= postIdStr %>/edit" class="icon-btn" title="Edit Post">
+                                    <a href="/posts/<%= postIdStr %>/edit" class="icon-btn" title="Edit Post" onclick="event.stopPropagation();">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -175,7 +175,7 @@
 
                             <div class="card-actions">
                                 <% if (canModify) { %>
-                                    <form method="POST" action="/posts/<%= postIdStr %>/delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                    <form method="POST" action="/posts/<%= postIdStr %>/delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this post?');" onclick="event.stopPropagation();">
                                         <button type="submit" class="text-btn danger" title="Delete post">Delete</button>
                                     </form>
                                 <% } %>

@@ -607,6 +607,10 @@ body {
     opacity: 0.7;
 }
 
+.post-card.clickable-card {
+    cursor: pointer;
+}
+
 .post-card:hover {
     transform: translateY(-4px);
     border-color: rgba(255, 255, 255, 0.2);
